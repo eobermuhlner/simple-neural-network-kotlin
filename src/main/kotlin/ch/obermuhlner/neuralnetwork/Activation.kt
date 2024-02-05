@@ -83,25 +83,3 @@ class Softmax : Activation {
         return derivative
     }
 }
-
-class CrossEntropyActivation : Activation {
-    override fun activation(m: Matrix): Matrix {
-        val expValues = m.map { v -> exp(v) }
-        val sumExp = expValues.sum()
-        return expValues.divide(sumExp)
-    }
-
-    override fun derivativeActivation(input: Matrix, output: Matrix): Matrix {
-        val m = input.rows
-        val n = input.cols
-        val result = MutableMatrix(m, n)
-
-        for (i in 0 until m) {
-            for (j in 0 until n) {
-                result[i, j] = output[i, j] * (1.0 - output[i, j])
-            }
-        }
-
-        return result
-    }
-}
