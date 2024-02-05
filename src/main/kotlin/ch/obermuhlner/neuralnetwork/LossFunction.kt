@@ -20,7 +20,7 @@ class MeanSquareError : LossFunction {
     }
 
     override fun gradient(predicted: Matrix, actual: Matrix): Matrix {
-        val gradient = Matrix(predicted.rows, predicted.cols)
+        val gradient = MutableMatrix(predicted.rows, predicted.cols)
         for (i in 0 until predicted.rows) {
             for (j in 0 until predicted.cols) {
                 // Derivative of MSE with respect to the predicted value
@@ -63,7 +63,7 @@ class CrossEntropyLoss : LossFunction {
         val n = predicted.cols
 
         // Calculate gradient of cross-entropy loss
-        val gradient = Matrix(m, n)
+        val gradient = MutableMatrix(m, n)
 
         for (i in 0 until m) {
             for (j in 0 until n) {

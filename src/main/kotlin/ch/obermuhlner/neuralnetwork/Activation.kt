@@ -33,7 +33,7 @@ class Tanh : Activation {
 
 class Softmax : Activation {
     override fun activation(m: Matrix): Matrix {
-        val result = Matrix(m.rows, m.cols)
+        val result = MutableMatrix(m.rows, m.cols)
         for (col in 0 until m.cols) {
             var maxVal = Double.NEGATIVE_INFINITY
             for (row in 0 until m.rows) {
@@ -53,7 +53,7 @@ class Softmax : Activation {
     }
 
     fun activation_ORIG(m: Matrix): Matrix {
-        val result = Matrix(m.rows, m.cols)
+        val result = MutableMatrix(m.rows, m.cols)
         for (row in 0 until m.rows) {
             var maxVal = Double.NEGATIVE_INFINITY
             for (col in 0 until m.cols) {
@@ -73,7 +73,7 @@ class Softmax : Activation {
     }
 
     override fun derivativeActivation(input: Matrix, output: Matrix): Matrix {
-        val derivative = Matrix(input.rows, input.cols)
+        val derivative = MutableMatrix(input.rows, input.cols)
         for (i in 0 until input.rows) {
             for (j in 0 until input.cols) {
                 val softmaxOutput = output[i, j]
@@ -94,7 +94,7 @@ class CrossEntropyActivation : Activation {
     override fun derivativeActivation(input: Matrix, output: Matrix): Matrix {
         val m = input.rows
         val n = input.cols
-        val result = Matrix(m, n)
+        val result = MutableMatrix(m, n)
 
         for (i in 0 until m) {
             for (j in 0 until n) {
