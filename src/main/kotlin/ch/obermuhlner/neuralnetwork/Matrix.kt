@@ -1,6 +1,7 @@
 package ch.obermuhlner.neuralnetwork
 
 import java.lang.StringBuilder
+import kotlin.math.pow
 
 open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
              protected val data: DoubleArray = DoubleArray(rows * cols, init)
@@ -14,21 +15,22 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
     val size: Int get() = data.size
 
     operator fun get(row: Int, col: Int): Double = data[row * cols + col]
-    operator fun set(row: Int, col: Int, value: Double) {
-        data[row * cols + col] = value
-    }
-
     operator fun get(index: Int): Double = data[index]
-    operator fun set(index: Int, value: Double) {
-        data[index] = value
-    }
 
     operator fun plus(other: Matrix): Matrix {
         return this.add(other)
     }
 
+    operator fun plus(scalar: Double): Matrix {
+        return this.add(scalar)
+    }
+
     operator fun minus(other: Matrix): Matrix {
         return this.subtract(other)
+    }
+
+    operator fun minus(scalar: Double): Matrix {
+        return this.subtract(scalar)
     }
 
     operator fun times(other: Matrix): Matrix {
@@ -37,6 +39,10 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
 
     operator fun times(scalar: Double): Matrix {
         return this.multiply(scalar)
+    }
+
+    operator fun div(other: Matrix): Matrix {
+        return this.divide(other)
     }
 
     operator fun div(scalar: Double): Matrix {
@@ -49,10 +55,18 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
         return Matrix(rows, cols, { i -> this.data[i] + other.data[i] })
     }
 
+    fun add(scalar: Double): Matrix {
+        return Matrix(rows, cols, { i -> this.data[i] + scalar })
+    }
+
     fun subtract(other: Matrix): Matrix {
         if (this.rows != other.rows) throw IllegalArgumentException("Matrix this.rows = ${this.rows} != other.rows = ${other.rows}")
         if (this.cols != other.cols) throw IllegalArgumentException("Matrix this.cols = ${this.cols} != other.cols = ${other.cols}")
         return Matrix(rows, cols, { i -> this.data[i] - other.data[i] })
+    }
+
+    fun subtract(scalar: Double): Matrix {
+        return Matrix(rows, cols, { i -> this.data[i] - scalar })
     }
 
     fun multiply(other: Matrix): Matrix {
@@ -65,8 +79,24 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
         return Matrix(rows, cols, { i -> this.data[i] * scalar })
     }
 
+    fun divide(other: Matrix): Matrix {
+        return Matrix(rows, cols, { i -> this.data[i] / other[i] })
+    }
+
     fun divide(scalar: Double): Matrix {
         return Matrix(rows, cols, { i -> this.data[i] / scalar })
+    }
+
+    fun pow(exponent: Double): Matrix {
+        return Matrix(rows, cols, { i -> this.data[i].pow(exponent) })
+    }
+
+    fun sqrt(): Matrix {
+        return Matrix(rows, cols, { i -> kotlin.math.sqrt(this.data[i]) })
+    }
+
+    fun reciprocal(): Matrix {
+        return Matrix(rows, cols, { i -> 1 / this.data[i] })
     }
 
     fun sum(): Double {
@@ -95,7 +125,7 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
 
     infix fun dot(other: Matrix): Matrix {
         if (this.cols != other.rows) throw IllegalArgumentException("Matrix this.cols = ${this.cols} != other.rows = ${other.rows}")
-        val result = Matrix(this.rows, other.cols)
+        val result = MutableMatrix(this.rows, other.cols)
         for (row in 0 until this.rows) {
             for (col in 0 until other.cols) {
                 var sum = 0.0
@@ -121,7 +151,7 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
     }
 
     fun transpose(): Matrix {
-        val result = Matrix(this.cols, this.rows)
+        val result = MutableMatrix(this.cols, this.rows)
         for (row in 0 until this.rows) {
             for (col in 0 until this.cols) {
                 result[col, row] = this[row, col]
@@ -134,7 +164,13 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
         return "Matrix $rows x $cols"
     }
 
-    fun contentToString(): String {
+    fun contentToString(aligned: Boolean = false): String {
+        val maxStringLength = if (aligned) {
+            data.map { it.toString().length }.max()
+        } else {
+            0
+        }
+
         val result = StringBuilder()
         result.append("[")
         for (row in 0 until rows) {
@@ -148,7 +184,7 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
                 if (col != 0) {
                     result.append(", ")
                 }
-                result.append(this[row, col])
+                result.append(this[row, col].toString().padStart(maxStringLength, ' '))
             }
             result.append("]")
         }
@@ -164,6 +200,13 @@ class MutableMatrix(rows: Int, cols: Int, init: (Int) -> Double) : Matrix(rows, 
     constructor(rows: Int, cols: Int, value: Double = 0.0) : this(rows, cols, { _ -> value })
 
     constructor(rows: Int, cols: Int, init: (row: Int, col: Int) -> Double) : this(rows, cols, { index -> init(index / cols, index % cols) })
+
+    operator fun set(row: Int, col: Int, value: Double) {
+        data[row * cols + col] = value
+    }
+    operator fun set(index: Int, value: Double) {
+        data[index] = value
+    }
 
     fun addInplace(other: Matrix) {
         if (this.rows != other.rows) throw IllegalArgumentException("Matrix this.rows = ${this.rows} != other.rows = ${other.rows}")
