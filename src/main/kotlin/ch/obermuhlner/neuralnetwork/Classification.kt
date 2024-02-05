@@ -3,7 +3,7 @@ package ch.obermuhlner.neuralnetwork
 object Classification {
 
     fun toOutputMatrix(label: Int, labelCount: Int): Matrix {
-        return Matrix(labelCount, 1, {index -> if (index == label) 1.0 else 0.0 })
+        return Matrix(1, labelCount, {index -> if (index == label) 1.0 else 0.0 })
     }
 
     fun toOutputLabel(m: Matrix): Int {

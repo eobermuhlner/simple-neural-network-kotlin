@@ -42,7 +42,7 @@ class MnistLoader(private val file: File) {
             } else {
                 val values = line.split(",")
                 val label = values[0].toInt()
-                val matrix = Matrix(28*28, 1, { index -> values[index+1].toDouble() / 256.0})
+                val matrix = Matrix(1, 28*28, { index -> values[index+1].toDouble() / 256.0})
                 result.add(Pair(label, matrix))
             }
         }

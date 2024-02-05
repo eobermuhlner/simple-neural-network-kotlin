@@ -32,7 +32,7 @@ class Tanh : Activation {
 }
 
 class Softmax : Activation {
-    override fun activation(m: Matrix): Matrix {
+    fun activationCols(m: Matrix): Matrix {
         val result = MutableMatrix(m.rows, m.cols)
         for (col in 0 until m.cols) {
             var maxVal = Double.NEGATIVE_INFINITY
@@ -52,7 +52,7 @@ class Softmax : Activation {
         return result
     }
 
-    fun activation_ORIG(m: Matrix): Matrix {
+    override fun activation(m: Matrix): Matrix {
         val result = MutableMatrix(m.rows, m.cols)
         for (row in 0 until m.rows) {
             var maxVal = Double.NEGATIVE_INFINITY
