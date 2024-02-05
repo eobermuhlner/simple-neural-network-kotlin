@@ -6,7 +6,10 @@ class NeuralNetwork(
     private val lossFunction: LossFunction,
     private val optimizer: Optimizer,
     private val learningRate: LearningRate,
-    private val layers: List<Layer>
+    private val layers: List<Layer>,
+    private val epochTestLogger: TestLogger = NopTestLogger(),
+    private val batchTestLogger: TestLogger = NopTestLogger(),
+    private val singleTestLogger: TestLogger = NopTestLogger(),
     ) {
 
     fun forward(input: Matrix): Matrix {
@@ -26,24 +29,28 @@ class NeuralNetwork(
 
     fun train(inputs: List<Matrix>, targets: List<Matrix>, epochs: Int, batchSize: Int) {
         for (epoch in 1 .. epochs) {
-            val currentLearningRate = learningRate.learningRate(epoch)
-
+            val currentLearningRate = learningRate.learningRate(epoch - 1)
             val shuffledIndices = inputs.indices.shuffled()
+
+            println("Epoch: $epoch, LearningRate: $currentLearningRate")
 
             for (startIndex in inputs.indices step batchSize) {
                 val endIndex = min(startIndex + batchSize, inputs.size)
 
                 for (index in shuffledIndices.slice(startIndex until endIndex)) {
                     train(inputs[index], targets[index], currentLearningRate)
+                    singleTestLogger.test(this)
                 }
+                batchTestLogger.test(this)
             }
+            epochTestLogger.test(this)
         }
     }
 
     private fun train(input: Matrix, target: Matrix, currentLearningRate: Double) {
         val predicted = forward(input)
         val loss = lossFunction.loss(predicted, target)
-        println("Loss: $loss")
+        //println("Loss: $loss")
         backward(predicted, target, currentLearningRate)
     }
 }
