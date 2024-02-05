@@ -21,7 +21,7 @@ fun main() {
 
     val network = NeuralNetwork(
         MeanSquareError(),
-        GradientDescent(),
+        GradientDescentOptimizer(),
         ExponentialDecayLearningRate(0.001, 0.01),
         listOf(
             DenseLayer(inputSize, hiddenSize, ReLU()),

@@ -1,13 +1,12 @@
 package ch.obermuhlner.neuralnetwork
 
 import kotlin.math.pow
-import kotlin.math.sqrt
 
 interface Optimizer {
     fun update(weights: Matrix, bias: Matrix, weightGradient: Matrix, biasGradient: Matrix, learningRate: Double): Pair<Matrix, Matrix>
 }
 
-class GradientDescent : Optimizer {
+class GradientDescentOptimizer : Optimizer {
     override fun update(
         weights: Matrix,
         bias: Matrix,
