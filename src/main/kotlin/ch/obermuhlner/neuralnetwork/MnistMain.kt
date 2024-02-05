@@ -10,52 +10,27 @@ fun main() {
     val hiddenSize = 28
     val outputSize = 10
 
-    val network = NeuralNetwork(
-        MeanSquareError(),
-        StochasticGradientDescent(),
-        FixedLearningRate(0.001),
-        listOf(
-            DenseLayer(inputSize, hiddenSize, ReLU()),
-            DenseLayer(hiddenSize, outputSize, ReLU())
-        )
-    )
-
     val trainMnist = MnistLoader(File("data/mnist/mnist_train.csv")).load()
     val testMnist = MnistLoader(File("data/mnist/mnist_test.csv")).load()
 
-    val trainOutputs = trainMnist.map { toOutputMatrix(it.first) }
+    val trainOutputs = trainMnist.map { Classification.toOutputMatrix(it.first, outputSize) }
     val trainInputs = trainMnist.map { it.second }
 
-    network.train(trainInputs, trainOutputs, 1, 100)
+    val testOutputs = testMnist.map { Classification.toOutputMatrix(it.first, outputSize) }
+    val testInputs = testMnist.map { it.second }
 
-    var countCorrect = 0
-    for ((label, input) in testMnist) {
-        val output = network.forward(input)
-        val outputLabel = toOutputLabel(output)
-        val correct = label == outputLabel
-        if (correct) {
-            countCorrect += 1
-        }
-        println("expected = $label, actual = $outputLabel, correct = $correct")
-    }
-    println("Correct ${countCorrect.toDouble() / testMnist.size}")
-}
+    val network = NeuralNetwork(
+        MeanSquareError(),
+        GradientDescent(),
+        ExponentialDecayLearningRate(0.001, 0.01),
+        listOf(
+            DenseLayer(inputSize, hiddenSize, ReLU()),
+            DenseLayer(hiddenSize, outputSize, ReLU())
+        ),
+        epochTestLogger = ClassificationTestLogger(testInputs, testOutputs)
+    )
 
-fun toOutputMatrix(label: Int): Matrix {
-    return Matrix(10, 1, {index -> if (index == label) 1.0 else 0.0 })
-}
-
-fun toOutputLabel(m: Matrix): Int {
-    var result = 0
-    var resultValue = 0.0
-    for (index in 0 until m.size) {
-        val value = m[index]
-        if (value > resultValue) {
-            result = index
-            resultValue = value
-        }
-    }
-    return result
+    network.train(trainInputs, trainOutputs, 10, 1000)
 }
 
 class MnistLoader(private val file: File) {
