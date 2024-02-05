@@ -1,6 +1,5 @@
 package ch.obermuhlner.neuralnetwork
 
-import java.lang.Math.pow
 import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -34,7 +33,7 @@ class ExponentialDecayLearningRate(
     }
 }
 
-class AdaGrad(
+class AdaGradLearningRate(
     private val initialLearningRate: Double,
     private val epsilon: Double = 1e-8
 ) : LearningRate {
@@ -49,7 +48,7 @@ class AdaGrad(
     }
 }
 
-class RMSprop(
+class RMSpropLearningRate(
     private val initialLearningRate: Double,
     private val decayRate: Double = 0.9,
     private val epsilon: Double = 1e-8
@@ -65,7 +64,7 @@ class RMSprop(
     }
 }
 
-class Adam(
+class AdamLearningRate(
     private val initialLearningRate: Double,
     private val beta1: Double = 0.9,
     private val beta2: Double = 0.999,
