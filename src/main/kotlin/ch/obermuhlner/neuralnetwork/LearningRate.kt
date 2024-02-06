@@ -20,7 +20,7 @@ class StepDecayLearningRate(
     private val decayEpochs: Int
 ) : LearningRate {
     override fun learningRate(epoch: Int): Double {
-        return initialLearningRate * decayFactor.pow((epoch / decayEpochs).toDouble())
+        return initialLearningRate * decayFactor.pow(((epoch - 1) / decayEpochs).toDouble())
     }
 }
 
@@ -29,7 +29,7 @@ class ExponentialDecayLearningRate(
     private val decayRate: Double
 ) : LearningRate {
     override fun learningRate(epoch: Int): Double {
-        return initialLearningRate * exp(-decayRate * epoch)
+        return initialLearningRate * exp(-decayRate * (epoch - 1))
     }
 }
 
