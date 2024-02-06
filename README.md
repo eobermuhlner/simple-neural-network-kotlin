@@ -1,12 +1,43 @@
-Simple implementation of a neural network in Kotlin.
+# Simple Neural Network in Kotlin
 
-No dependencies to other libraries.
+This project provides a straightforward implementation of a neural network in Kotlin, designed for educational purposes and ease of understanding. The neural network is implemented without the use of external machine learning libraries, making it an excellent resource for those looking to understand the fundamentals of neural networks and their implementation details.
+
+## Features
+- Fully Implemented in Kotlin: Utilizes Kotlin's concise syntax and features for clear and readable code.
+- No External Dependencies: Built from the ground up without relying on external machine learning libraries.
+- Customizable Neural Network Architecture: Easily configure the number of layers and neurons to fit various problem requirements. 
+- Simple API: Designed to be accessible to beginners, with straightforward methods for training and using the network.
+
+## Getting Started
+
+To get started with this neural network, clone the repository and import it into your preferred IDE that supports Kotlin projects. 
+Ensure you have Kotlin set up in your development environment.
+
+## Example: MnistMain
+
+The `MnistMain` class demonstrates a practical application of the neural network using the MNIST dataset, a large database of handwritten digits commonly used for training and testing in the field of machine learning.
+
+### Setup and Execution
+
+To run the MnistMain example:
+
+- Ensure the MNIST dataset is available in the expected format and location.
+  - Create the directory `data/mnist` in the root of this project
+  - Download the two zip files from https://www.kaggle.com/datasets/oddrationale/mnist-in-csv
+  - Unzip them to create `mnist_test.csv` and `mnist_train.csv` into the directory `data/mnist`
+-  Execute the MnistMain.kt file, which will automatically load the dataset, initialize the neural network, train it with the dataset, and evaluate its performance.
+
+### Understanding MnistMain
+
+- Data Preparation: The class includes methods for loading and preparing the MNIST dataset.
+- Network Configuration: It demonstrates how to configure the neural network for the task of digit recognition.
+- Training and Evaluation: It includes the process of training the network with the MNIST dataset and evaluating its accuracy.
 
 ## Overview
 
 ### NeuralNetwork
 
-The `NeuralNetwork` class  provides a framework for building and training neural networks in Java. 
+The `NeuralNetwork` class  provides a framework for building and training neural networks in Kotlin. 
 It encapsulates core functionalities such as forward propagation through layers with `forward(input: Matrix)`, 
 backward propagation with `backward(predicted: Matrix, actual: Matrix, currentLearningRate: Double)`, 
 and a training loop `train(inputs: List<Matrix>, targets: List<Matrix>, epochs: Int, batchSize: Int)`. 
