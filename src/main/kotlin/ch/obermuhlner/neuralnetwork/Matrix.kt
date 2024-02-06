@@ -150,6 +150,10 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
         return Matrix(rows, cols) { row, col -> func(row, col, this[row, col]) }
     }
 
+    fun norm(): Double {
+        return kotlin.math.sqrt(data.sumOf { it * it })
+    }
+
     fun transpose(): Matrix {
         val result = MutableMatrix(this.cols, this.rows)
         for (row in 0 until this.rows) {
@@ -157,6 +161,22 @@ open class Matrix(val rows: Int, val cols: Int, init: (index: Int) -> Double,
                 result[col, row] = this[row, col]
             }
         }
+        return result
+    }
+
+    fun repeatRows(times: Int): Matrix {
+        require(times > 0) { "Times must be greater than 0" }
+
+        val result = MutableMatrix(this.rows * times, this.cols)
+
+        for (t in 0 until times) {
+            for (row in 0 until this.rows) {
+                for (col in 0 until this.cols) {
+                    result[t * this.rows + row, col] = this.data[row * this.cols + col]
+                }
+            }
+        }
+
         return result
     }
 
