@@ -19,38 +19,32 @@ class DenseLayer(
     var weights: Matrix = Matrix(inputSize, outputSize, weightInit)
     var biases: Matrix = Matrix(1, outputSize, biasInit)
 
-    // For storing the inputs to the layer, and the outputs from the activation function
     private lateinit var lastInput: Matrix
     private lateinit var lastOutput: Matrix
 
-    private lateinit var weightGradients: Matrix
-    private lateinit var biasGradients: Matrix
-
     override fun forward(input: Matrix): Matrix {
         lastInput = input
-        val z = input.dot(weights).add(biases) // Compute weighted input plus bias
-        lastOutput = activationFunc.activation(z) // Apply activation function
+        val z = input.dot(weights) + biases.repeatRows(input.rows) // Adjust biases for batch size
+        lastOutput = activationFunc.activation(z)
         return lastOutput
     }
 
     override fun backward(errorSignal: Matrix, optimizer: Optimizer, learningRate: Double): Matrix {
-        // Calculate derivative of activation function using both the input to the activation function (lastZ)
-        // and the output from the activation function (lastOutput)
-        val z = lastInput.dot(weights).add(biases) // Recalculate z to get the input to the activation function
+        val z = lastInput.dot(weights) + biases.repeatRows(lastInput.rows) // Recalculate z if needed
         val sigmaPrime = activationFunc.derivativeActivation(z, lastOutput)
 
-        val delta = errorSignal.multiply(sigmaPrime) // Calculate delta
+        val delta = errorSignal.multiply(sigmaPrime)
 
-        // Compute gradients for weights and biases
-        weightGradients = lastInput.transpose().dot(delta)
-        biasGradients = delta.sumColumns() // Sum errors over all examples for each bias
+        // Averaging the gradients across the batch for weights
+        val weightGradients = lastInput.transpose().dot(delta) / lastInput.rows.toDouble()
+        // Summing the gradients across the batch for biases
+        val biasGradients = delta.sumColumns() / lastInput.rows.toDouble()
 
-        // Update weights and biases
         val updated = optimizer.update(weights, biases, weightGradients, biasGradients, learningRate)
         weights = updated.first
         biases = updated.second
 
-        // Compute the error signal for the previous layer
         return delta.dot(weights.transpose())
     }
 }
+

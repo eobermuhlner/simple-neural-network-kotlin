@@ -22,7 +22,9 @@ fun main() {
     val network = NeuralNetwork(
         MeanSquareError(),
         GradientDescentOptimizer(),
-        ExponentialDecayLearningRate(0.001, 0.01),
+        NopGradientClip(), //NormGradientClip(5.0),
+        FixedLearningRate(0.001), //ExponentialDecayLearningRate(0.001, 0.01),
+        FixedBatchSize(1),
         listOf(
             DenseLayer(inputSize, hiddenSize, ReLU()),
             DenseLayer(hiddenSize, outputSize, ReLU())
@@ -30,7 +32,7 @@ fun main() {
         epochTestLogger = ClassificationTestLogger(testInputs, testOutputs)
     )
 
-    network.train(trainInputs, trainOutputs, 10, 1000)
+    network.train(trainInputs, trainOutputs, 10)
 }
 
 class MnistLoader(private val file: File) {
