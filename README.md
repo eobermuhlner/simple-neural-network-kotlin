@@ -61,31 +61,36 @@ This structure is fundamental for many types of neural networks, including deep 
 
 ### Activation
 
-`Activation` Interface: Specifies two functions for any activation implementation: 
-`activation(m: Matrix)`: Matrix to compute the activation of input matrix m, 
-and `derivativeActivation(input: Matrix, output: Matrix): Matrix` to calculate the derivative of the activation function given input and output matrices.
+Activation functions take an input signal and produce an output signal, but they take into account the threshold. They are applied to the input of a neuron (or a layer of neurons) and determine whether it should be activated or not, influencing the ability of the network to learn and make predictions.
 
-#### ReLU
+Each activation function class implements the Activation interface, which requires two methods:
 
-`ReLU` Class: Implements the Rectified Linear Unit (ReLU) activation function. 
-The activation method outputs the input value if it's greater than 0; otherwise, it outputs 0. 
-Its derivativeActivation method returns 1 for inputs greater than 0, and 0 otherwise, reflecting the gradient of ReLU.
+`activation(m: Matrix): Matrix`: Applies the activation function to each element of the input matrix m and returns a new matrix with the results.
+`derivativeActivation(input: Matrix, output: Matrix): Matrix`: Computes the derivative of the activation function with respect to the input matrix, which is essential for backpropagation during training.
+
+#### ReLU (Rectified Linear Unit)
+
+Description: Implements the ReLU activation function, which outputs the input directly if it is positive, else it will output zero. It is defined as f(x) = max(0, x).
+
+Usage: Commonly used in hidden layers due to its efficiency and simplicity.
 
 #### Sigmoid
 
-`Sigmoid` Class: Implements the Sigmoid activation function, which outputs values in the range (0,1), useful for binary classification tasks.
-The derivative is calculated based on the output of the sigmoid function itself, reflecting its gradient.
+Description: Implements the Sigmoid activation function, defined as f(x) = 1 / (1 + exp(-x)). It outputs a value between 0 and 1, making it suitable for probabilities.
 
-#### Tanh
+Usage: Often used in the output layer for binary classification problems.
 
-`Tanh` Class: Implements the hyperbolic tangent activation function that outputs values in the range (-1,1).
-The derivative is calculated as 1 - tanh^2(value), which is the gradient of the tanh function.
+#### Tanh (Hyperbolic Tangent)
+
+Description: Implements the Tanh activation function, which outputs values between -1 and 1. It is defined as f(x) = (exp(x) - exp(-x)) / (exp(x) + exp(-x)).
+
+Usage: Useful in hidden layers when the data is centered around zero.
 
 #### Softmax
 
-`Softmax` Class: Used for multi-class classification tasks, it normalizes the input into a probability distribution across various classes. 
-The activation method computes the softmax of the input matrix. 
-The derivativeActivation method computes the derivative of the softmax function, useful for backpropagation in neural networks.
+Description: Implements the Softmax activation function, which is often used in the output layer for multi-class classification problems. It converts logits (raw predictions) into probabilities by taking the exponential of each output and then normalizing these values by dividing by the sum of all the exponentials.
+
+Usage: Typically used in the output layer to represent a probability distribution over multiple classes.
 
 
 ### Optimizer
@@ -121,3 +126,72 @@ Returns: A pair containing the updated weights and biases.
 #### StepDecayLearningRate
 
 #### ExponentialDecayLearningRate
+
+### Matrix
+
+The Matrix class provides a comprehensive set of functionalities for creating and manipulating matrices, essential for various numerical computations and operations in neural networks. This documentation covers the core aspects of the Matrix class, including its constructors, methods, and utility functions.
+
+#### Primary Constructor
+
+```kotlin
+Matrix(rows: Int, cols: Int, init: (index: Int) -> Double)
+```
+
+Parameters:
+- `rows`: Number of rows in the matrix.
+- `cols`: Number of columns in the matrix.
+- `init`: A lambda function to initialize the matrix elements based on their index.
+
+Description: Creates a matrix of the specified size, with each element initialized according to the provided lambda function.
+
+#### Secondary Constructors
+
+```kotlin
+Matrix(rows: Int, cols: Int, value: Double)
+```
+
+Description: Initializes a matrix where all elements are set to the specified value.
+
+```kotlin
+Matrix(rows: Int, cols: Int, values: List<Double>)
+```
+
+Description: Initializes a matrix with elements from the provided list. The list size must match rows * cols.
+
+```kotlin
+Matrix(rows: Int, cols: Int, init: (row: Int, col: Int) -> Double)
+```
+
+Description: Similar to the primary constructor but allows initialization based on row and column indices rather than a flat index.
+
+#### Arithmetic Operations
+- Addition (`+`): Adds two matrices or a matrix and a scalar.
+- Subtraction (`-`): Subtracts two matrices or a matrix and a scalar.
+- Multiplication (`*`): Multiplies two matrices or a matrix by a scalar.
+- Division (`/`): Divides matrix elements by another matrix or a scalar.
+
+#### Utility Functions
+
+- `transpose()`: Returns a new matrix that is the transpose of the original matrix.
+- `dot(other: Matrix)`: Performs the dot product between two matrices.
+- `map(func: (value: Double) -> Double)`: Returns a new matrix with a function applied to each element.
+- `sum()`: Calculates the sum of all elements in the matrix.
+- `norm()`: Computes the Frobenius norm of the matrix.
+
+#### Element-wise Operations
+
+- `add(other: Matrix)`: Element-wise addition of two matrices.
+- `subtract(other: Matrix)`: Element-wise subtraction of two matrices.
+- `multiply(other: Matrix)`: Element-wise multiplication of two matrices.
+- `divide(other: Matrix)`: Element-wise division of two matrices.
+
+#### Example Usage
+
+```kotlin
+val matrix1 = Matrix(2, 2, 1.0)
+val matrix2 = Matrix(2, 2) { row, col -> (row + col).toDouble() }
+val result = matrix1 + matrix2
+```
+
+This example demonstrates creating two matrices and adding them together.
+The Matrix class provides a flexible API for performing a wide range of matrix operations, making it a foundational component for numerical computations and neural network implementations.
