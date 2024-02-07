@@ -2,8 +2,18 @@ package ch.obermuhlner.neuralnetwork
 
 import java.io.File
 
+// Download two zip files from the following web page:
 // https://www.kaggle.com/datasets/oddrationale/mnist-in-csv
-
+// - mnist_train.csv.zip
+// - mnist_test.csv.zip
+// Create directory `data/mnist` in the root of this project
+// Extract the two *.csv files from the zip files into this directory
+// The resulting structure will be:
+// - simple-neural-network-kotlin
+//   - data
+//     - mnist
+//       - mnist_train.csv
+//       - mnist_test.csv
 
 fun main() {
     val inputSize = 28*28
