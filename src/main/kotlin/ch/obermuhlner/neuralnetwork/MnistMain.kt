@@ -1,6 +1,7 @@
 package ch.obermuhlner.neuralnetwork
 
 import java.io.File
+import kotlin.random.Random
 
 // Download two zip files from the following web page:
 // https://www.kaggle.com/datasets/oddrationale/mnist-in-csv
@@ -54,7 +55,7 @@ class MnistLoader(private val file: File) {
             } else {
                 val values = line.split(",")
                 val label = values[0].toInt()
-                val matrix = Matrix(1, 28*28, { index -> values[index+1].toDouble() / 256.0})
+                val matrix = Matrix(1, 28*28, { index -> values[index+1].toDouble() / 255.0})
                 result.add(Pair(label, matrix))
             }
         }
